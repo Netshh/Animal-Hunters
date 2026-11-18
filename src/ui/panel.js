@@ -1,10 +1,10 @@
-import { ago } from '../utils/store.js';
+import { ago, esc } from '../utils/store.js';
 const el = document.getElementById('panel');
 
 export function showPanel(d, claimed, { canClaim = false, onClaim } = {}) {
   const c = claimed[d.id];
   const status = c
-    ? `Ditangkap oleh <b>${c.by}</b> pada ${new Date(c.at).toLocaleDateString('id-ID')}`
+    ? `Ditangkap oleh <b>${esc(c.by)}</b> pada ${new Date(c.at).toLocaleDateString('id-ID')}`
     : canClaim ? 'Kamu menemukannya! Klaim sekarang sebelum orang lain.' : 'Masih tersembunyi. Pindai kode QR-nya untuk mengklaim.';
   el.innerHTML = `
     <button class="x" aria-label="Tutup">×</button>

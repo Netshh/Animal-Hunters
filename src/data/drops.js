@@ -1,4 +1,4 @@
-// Mock data. Replace with an API call once the backend exists.
+// Drop positions and names (public). The secret QR tokens are NOT here; they live in Supabase (drop_tokens).
 export const CENTER = [106.8456, -6.2088]; // Jakarta [lng, lat]
 export const POINTS = { umum: 10, langka: 25, legendaris: 50 };
 export const SERIES = [
@@ -22,9 +22,9 @@ export const DROPS = [];
 for (const s of SERIES) {
   for (let n = 1; n <= 6; n++) {
     const a = r() * Math.PI * 2, d = Math.sqrt(r()) * 0.06;
+    r(); // old token draw, kept so positions stay identical. Tokens now live only in the database.
     DROPS.push({
       id: `${s.key}-${n}`, series: s.key, name: s.name, edition: n,
-      token: Math.floor(r() * 36 ** 6).toString(36).padStart(6, '0'),
       lng: CENTER[0] + Math.cos(a) * d, lat: CENTER[1] + Math.sin(a) * d,
       daysAgo: 1 + Math.floor(r() * 400),
     });
