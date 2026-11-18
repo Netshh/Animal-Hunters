@@ -14,3 +14,7 @@ export const PLAYERS = NAMES.map((name, i) => ({
   id: `p${i}`, name,
   claims: pool.splice(0, COUNTS[i]).map((d) => ({ dropId: d.id, daysAgo: Math.floor(rnd() * Math.min(d.daysAgo, 90)) })),
 }));
+
+// Example players so the leaderboard is never empty while testing. Set to false to hide them.
+export const SHOW_DEMO_PLAYERS = true;
+export const DEMO_PLAYERS = PLAYERS.map((p) => ({ ...p, id: `demo-${p.id}`, demo: true }));

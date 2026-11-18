@@ -41,14 +41,15 @@ export const ago = (days) =>
   days < 1 ? 'hari ini' : days < 30 ? `${days} hari lalu` : days < 365 ? `${Math.round(days / 30)} bulan lalu` : 'lebih dari setahun lalu';
 
 // Every drop on the map (public info only: no tokens). Newest first.
+// select('*') so one missing/renamed column can never make the whole map empty.
 export async function loadDrops() {
-  const { data, error } = await supabase.from('drops')
-    .select('id,series,edition,lng,lat,created_at,is_mock').order('created_at', { ascending: false });
+  const { data, error } = await supabase.from('drops').select('*');
   if (error) throw error;
-  return data.filter((d) => seriesOf[d.series]).map((d) => ({
+  const t = (d) => (d.created_at ? new Date(d.created_at).getTime() : 0);
+  return data.filter((d) => seriesOf[d.series]).sort((x, y) => t(y) - t(x)).map((d) => ({
     id: d.id, series: d.series, name: seriesOf[d.series].name, edition: d.edition,
     lng: d.lng, lat: d.lat, mock: !!d.is_mock,
-    daysAgo: Math.max(0, Math.floor((Date.now() - new Date(d.created_at).getTime()) / 864e5)),
+    daysAgo: d.created_at ? Math.max(0, Math.floor((Date.now() - t(d)) / 864e5)) : 0,
   }));
 }
 

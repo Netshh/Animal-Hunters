@@ -1,4 +1,4 @@
-import { SERIES, POINTS } from '../data/drops.js';
+import { SERIES, POINTS, DROPS } from '../data/drops.js';
 import { ago, esc } from '../utils/store.js';
 
 const el = document.getElementById('board');
@@ -17,7 +17,7 @@ const points = (claims) => claims.reduce((a, c) => a + POINTS[seriesOfClaim(c).r
 // Real players from Supabase (set by main.js via setBoardData).
 let data = { players: [], meId: null };
 export const setBoardData = (d) => {
-  dropOf = Object.fromEntries((d.drops || []).map((x) => [x.id, x]));
+  dropOf = Object.fromEntries([...DROPS, ...(d.drops || [])].map((x) => [x.id, x])); // built-in filler ids keep example players working
   // ignore claims whose drop no longer exists (e.g. deleted by the developer)
   data = { meId: d.meId, players: d.players.map((p) => ({ ...p, claims: p.claims.filter((c) => dropOf[c.dropId]) })) };
 };
@@ -44,7 +44,7 @@ function renderList() {
       `<button role="tab" class="${i === period ? 'on' : ''}" data-act="period" data-v="${i}">${p.label}</button>`).join('')}</div>
     ${rows.length ? `<ol class="lb-list">${rows.map((p) => `<li><button class="lb-row ${p.me ? 'me' : ''}" data-act="player" data-id="${p.id}">
         <span class="rank">${medal(p.rank)}</span>${avatar(p.name)}
-        <span class="who"><strong>${esc(p.name)}${p.me ? '<span class="you">Kamu</span>' : ''}</strong><small>${p.count} hewan</small></span>
+        <span class="who"><strong>${esc(p.name)}${p.me ? '<span class="you">Kamu</span>' : ''}${p.demo ? '<span class="demo-tag">contoh</span>' : ''}</strong><small>${p.count} hewan</small></span>
         <span class="pts">${p.pts}<small>poin</small></span><span class="chev">›</span></button></li>`).join('')}</ol>`
       : '<p class="empty">Belum ada yang menemukan hewan di periode ini.</p>'}
     <div class="lb-me">${mine ? `Posisimu: <b>#${mine.rank}</b> dengan ${mine.count} hewan (${mine.pts} poin).`
@@ -62,7 +62,7 @@ function renderDetail() {
   const recent = [...p.claims].sort((a, b) => a.daysAgo - b.daysAgo).slice(0, 4);
   el.innerHTML = `
     <button class="back" data-act="back">‹ Kembali ke peringkat</button>
-    <div class="pf">${avatar(p.name, 'big')}<div><h3>${esc(p.name)}${p.me ? '<span class="you">Kamu</span>' : ''}</h3>
+    <div class="pf">${avatar(p.name, 'big')}<div><h3>${esc(p.name)}${p.me ? '<span class="you">Kamu</span>' : ''}${p.demo ? '<span class="demo-tag">contoh</span>' : ''}</h3>
       <small class="muted">${row ? `Peringkat #${row.rank} · ${PERIODS[period].label.toLowerCase()}` : 'Belum masuk peringkat periode ini'}</small></div></div>
     <div class="stats"><div><b>${p.claims.length}</b><span>Hewan</span></div><div><b>${points(p.claims)}</b><span>Poin</span></div>
       <div><b>${Object.keys(inv).length}/${SERIES.length}</b><span>Jenis</span></div></div>
