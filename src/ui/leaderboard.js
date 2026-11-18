@@ -1,10 +1,10 @@
-import { DROPS, SERIES, POINTS } from '../data/drops.js';
+import { SERIES, POINTS } from '../data/drops.js';
 import { ago, esc } from '../utils/store.js';
 
 const el = document.getElementById('board');
 const links = [...document.querySelectorAll('.nav nav a[data-view]')];
 const seriesOf = Object.fromEntries(SERIES.map((s) => [s.key, s]));
-const dropOf = Object.fromEntries(DROPS.map((d) => [d.id, d]));
+let dropOf = {};
 const PERIODS = [{ days: 7, label: '7 hari' }, { days: 30, label: '30 hari' }, { days: Infinity, label: 'Semua' }];
 const RARITY = { umum: 'Umum', langka: 'Langka', legendaris: 'Legendaris' };
 let period = 2, view = null; // view = id of the player being inspected
@@ -16,7 +16,11 @@ const points = (claims) => claims.reduce((a, c) => a + POINTS[seriesOfClaim(c).r
 
 // Real players from Supabase (set by main.js via setBoardData).
 let data = { players: [], meId: null };
-export const setBoardData = (d) => { data = d; };
+export const setBoardData = (d) => {
+  dropOf = Object.fromEntries((d.drops || []).map((x) => [x.id, x]));
+  // ignore claims whose drop no longer exists (e.g. deleted by the developer)
+  data = { meId: d.meId, players: d.players.map((p) => ({ ...p, claims: p.claims.filter((c) => dropOf[c.dropId]) })) };
+};
 function everyone() {
   return data.players.map((p) => ({ ...p, claims: [...p.claims], me: p.id === data.meId }));
 }

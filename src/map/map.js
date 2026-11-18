@@ -22,7 +22,7 @@ export function createMap(center) {
   });
 
   // Flatten the tilt when zoomed far out, where tilting makes no sense.
-  map.on('zoom', () => {
+  map.on('zoom', () => {  
     const z = map.getZoom();
     const limit = z < 4 ? 0 : z < 7 ? 40 : 75;
     map.setMaxPitch(limit);

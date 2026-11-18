@@ -1,12 +1,13 @@
 import './styles/main.css';
-import { CENTER, DROPS } from './data/drops.js';
+import { CENTER } from './data/drops.js';
 import { getSession, signIn, signOut, onAuthChange, displayName } from './utils/supabase.js';
-import { loadGame, claimWithToken } from './utils/store.js';
+import { loadGame, loadDrops, claimWithToken, fetchIsAdmin } from './utils/store.js';
 import { createMap } from './map/map.js';
-import { addMarkers } from './map/markers.js';
+import { createMarkers } from './map/markers.js';
 import { showPanel } from './ui/panel.js';
 import { renderList } from './ui/dropList.js';
 import { initBoard, refreshBoard, setBoardData } from './ui/leaderboard.js';
+import { initAdmin } from './ui/admin.js';
 
 const PENDING = 'th_pending'; // keeps ?d=...&claim=... alive across the Google redirect
 const keep = (v) => { try { sessionStorage.setItem(PENDING, v); } catch { /* storage blocked */ } };
@@ -29,15 +30,19 @@ async function start() {
   restorePending();
 
   const map = createMap(CENTER);
+  const ready = new Promise((res) => map.once('load', res));
   const params = new URLSearchParams(location.search);
+  const scannedId = params.get('d');
   let token = params.get('claim'); // secret from the QR code
-  const scanned = DROPS.find((d) => d.id === params.get('d')) || null;
   const loginBtn = document.getElementById('login');
-  let claims = {}, players = [], markers;
+  let claims = {}, players = [], drops = [];
+
+  const markers = createMarkers(map, (d) => open(d));
+  const admin = initAdmin({ map, getDrops: () => drops, getClaims: () => claims, onChange: () => refresh() });
 
   function open(d, fly = true) {
     if (fly) map.flyTo({ center: [d.lng, d.lat], zoom: Math.max(map.getZoom(), 15.5), speed: 0.9 });
-    showPanel(d, claims, { canClaim: !!token && scanned?.id === d.id, onClaim: () => doClaim(d) });
+    showPanel(d, claims, { canClaim: !!token && scannedId === d.id, onClaim: () => doClaim(d) });
   }
 
   async function doClaim(d) {
@@ -46,31 +51,41 @@ async function start() {
       await claimWithToken(token);
       token = null; history.replaceState(null, '', location.pathname); // the QR is spent
     } catch (e) { console.error(e); alert(claimError(e)); }
-    await refresh(); open(d, false);
+    await refresh(); open(drops.find((x) => x.id === d.id) || d, false);
   }
 
   async function refresh() {
-    try { ({ claims, players } = await loadGame()); } catch (e) { console.error('Gagal memuat data', e); }
-    markers.forEach((el, id) => el.classList.toggle('claimed', !!claims[id]));
-    renderList(DROPS, claims, open);
+    try {
+      const [g, ds] = await Promise.all([loadGame(), loadDrops()]);
+      ({ claims, players } = g); drops = ds;
+    } catch (e) { console.error('Gagal memuat data', e); }
+    markers.sync(drops);
+    markers.setClaimed(claims);
+    renderList(drops, claims, open);
     loginBtn.textContent = user ? displayName(user) : 'Masuk';
-    setBoardData({ players, meId: user?.id ?? null });
+    setBoardData({ players, meId: user?.id ?? null, drops });
     refreshBoard();
+    admin.update();
   }
+  const syncAdmin = async () => admin.setAdmin(user ? await fetchIsAdmin() : false);
 
-  markers = addMarkers(map, DROPS, open);
   initBoard();
   loginBtn.onclick = async () => {
     if (!user) return signIn();
     if (confirm(`Keluar dari akun ${displayName(user)}?`)) await signOut();
   };
   onAuthChange((event, s) => {
-    if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') { user = s?.user ?? null; refresh(); }
+    if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+      user = s?.user ?? null;
+      setTimeout(async () => { await refresh(); syncAdmin(); }, 0); // not inside the auth callback itself
+    }
   });
 
   await refresh();
-  if (scanned && token) map.once('load', () => open(scanned));
-  else if (params.get('claim') || params.get('d')) alert('Kode QR ini tidak dikenali.');
+  syncAdmin();
+  const scanned = drops.find((d) => d.id === scannedId);
+  if (scanned && token) ready.then(() => open(scanned));
+  else if (params.get('claim') || scannedId) alert('Kode QR ini tidak dikenali.');
 }
 
 start();
