@@ -1,4 +1,5 @@
 import maplibregl from 'maplibre-gl';
+import { SERIES } from '../data/drops.js';
 
 // Each drop is an upright 2D sprite (billboard). Drops now come from the database,
 // so markers can be added and removed at any time with sync().
@@ -17,6 +18,7 @@ export function createMarkers(map, onPick) {
       if (!it) {
         const el = document.createElement('button');
         el.className = 'marker';
+        el.dataset.r = SERIES.find((s) => s.key === d.series)?.rarity || '';
         el.innerHTML = `<img src="/assets/animals/${d.series}.png" alt="" draggable="false">`;
         el.addEventListener('click', (e) => { e.stopPropagation(); onPick(items.get(d.id).drop); });
         const marker = new maplibregl.Marker({ element: el, anchor: 'bottom', pitchAlignment: 'viewport', rotationAlignment: 'viewport' })

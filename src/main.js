@@ -1,4 +1,5 @@
 import './styles/main.css';
+import './styles/rarity.css';
 import { CENTER } from './data/drops.js';
 import { DEMO_PLAYERS, SHOW_DEMO_PLAYERS } from './data/players.js';
 import { getSession, signIn, signOut, onAuthChange, displayName } from './utils/supabase.js';
@@ -9,6 +10,7 @@ import { showPanel } from './ui/panel.js';
 import { renderList } from './ui/dropList.js';
 import { initBoard, refreshBoard, setBoardData } from './ui/leaderboard.js';
 import { initAdmin } from './ui/admin.js';
+import { initCodex, setCodexData } from './ui/codex.js';
 
 const PENDING = 'th_pending'; // keeps ?d=...&claim=... alive across the Google redirect
 const AUTO = 'th_autoclaim';  // "the user pressed claim before signing in": finish the claim after login
@@ -85,11 +87,13 @@ async function start() {
     loginBtn.textContent = user ? displayName(user) : 'Masuk';
     setBoardData({ players: [...players, ...(SHOW_DEMO_PLAYERS ? DEMO_PLAYERS : [])], meId: user?.id ?? null, drops });
     refreshBoard();
+    setCodexData({ drops, claims, meId: user?.id ?? null });
     admin.update();
   }
   const syncAdmin = async () => admin.setAdmin(user ? await fetchIsAdmin() : false);
 
   initBoard();
+  initCodex();
   loginBtn.onclick = async () => {
     if (!user) return signIn();
     if (confirm(`Keluar dari akun ${displayName(user)}?`)) await signOut();

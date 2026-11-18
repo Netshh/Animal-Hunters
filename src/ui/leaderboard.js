@@ -1,4 +1,4 @@
-import { SERIES, POINTS, DROPS } from '../data/drops.js';
+import { SERIES, POINTS, DROPS, RARITIES } from '../data/drops.js';
 import { ago, esc } from '../utils/store.js';
 
 const el = document.getElementById('board');
@@ -6,7 +6,6 @@ const links = [...document.querySelectorAll('.nav nav a[data-view]')];
 const seriesOf = Object.fromEntries(SERIES.map((s) => [s.key, s]));
 let dropOf = {};
 const PERIODS = [{ days: 7, label: '7 hari' }, { days: 30, label: '30 hari' }, { days: Infinity, label: 'Semua' }];
-const RARITY = { umum: 'Umum', langka: 'Langka', legendaris: 'Legendaris' };
 let period = 2, view = null; // view = id of the player being inspected
 
 const avatar = (n, big = '') =>
@@ -50,7 +49,7 @@ function renderList() {
     <div class="lb-me">${mine ? `Posisimu: <b>#${mine.rank}</b> dengan ${mine.count} hewan (${mine.pts} poin).`
       : me ? 'Kamu belum menemukan hewan di periode ini. Pindai kode QR untuk masuk papan peringkat!'
       : 'Tekan <b>Masuk</b> lalu pindai kode QR hewan untuk muncul di papan peringkat.'}</div>
-    <p class="lb-note">Poin: Umum ${POINTS.umum} · Langka ${POINTS.langka} · Legendaris ${POINTS.legendaris}</p>`;
+    <p class="lb-note">Poin: ${Object.values(RARITIES).map((r) => `${r.label} ${r.points}`).join(' · ')}</p>`;
 }
 
 function renderDetail() {
@@ -68,7 +67,7 @@ function renderDetail() {
       <div><b>${Object.keys(inv).length}/${SERIES.length}</b><span>Jenis</span></div></div>
     <h4 class="lb-sec">Koleksi hewan</h4>
     <div class="pets">${SERIES.map((s) => inv[s.key]
-      ? `<div class="pet ${s.rarity}" title="${s.name}"><img src="/assets/animals/${s.key}.png" alt="${s.name}"><b>×${inv[s.key]}</b><span>${s.name}</span><i>${RARITY[s.rarity]}</i></div>`
+      ? `<div class="pet ${s.rarity}" data-r="${s.rarity}" title="${s.name}"><img src="/assets/animals/${s.key}.png" alt="${s.name}"><b>×${inv[s.key]}</b><span>${s.name}</span><i class="rar" data-r="${s.rarity}">${RARITIES[s.rarity].label}</i></div>`
       : `<div class="pet locked" title="Belum ditemukan"><img src="/assets/animals/${s.key}.png" alt=""><span>???</span></div>`).join('')}</div>
     <h4 class="lb-sec">Tangkapan terbaru</h4>
     <ul class="recent">${recent.map((c) => `<li>${seriesOfClaim(c).name} #${dropOf[c.dropId].edition}<small>${ago(c.daysAgo)}</small></li>`).join('') || '<li>Belum ada tangkapan.</li>'}</ul>`;

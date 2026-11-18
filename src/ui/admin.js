@@ -3,10 +3,9 @@
 // create_drop / get_drop_token / delete_drop in Supabase all refuse anyone who is not in the admins table.
 import maplibregl from 'maplibre-gl';
 import '../styles/admin.css';
-import { SERIES } from '../data/drops.js';
+import { SERIES, RARITIES } from '../data/drops.js';
 import { createDrop, getDropToken, deleteDrop, esc } from '../utils/store.js';
 
-const RARITY = { umum: 'Umum', langka: 'Langka', legendaris: 'Legendaris' };
 const nameOf = (key) => SERIES.find((s) => s.key === key)?.name || key;
 const round = (n) => Math.round(n * 1e6) / 1e6;
 
@@ -158,7 +157,7 @@ export function initAdmin({ map, getDrops, getClaims, onChange }) {
       <div class="lb-head"><h2>Mode Developer</h2><button class="icon-btn" data-act="close" aria-label="Tutup">×</button></div>
       <p class="lb-sub">Klik peta untuk menaruh pin (pin bisa digeser). Pilih hewan, lalu buat QR unik untuk mainan itu.</p>
       <label class="adm-l">Hewan
-        <select data-f="series">${SERIES.map((s) => `<option value="${s.key}" ${s.key === series ? 'selected' : ''}>${esc(s.name)} (${RARITY[s.rarity]})</option>`).join('')}</select></label>
+        <select data-f="series">${SERIES.map((s) => `<option value="${s.key}" ${s.key === series ? 'selected' : ''}>${esc(s.name)} (${RARITIES[s.rarity].label})</option>`).join('')}</select></label>
       <label class="adm-l">Lokasi (lintang, bujur), bisa ditempel dari Google Maps
         <input data-f="coords" placeholder="-6.2088, 106.8456" value="${pos ? `${pos.lat}, ${pos.lng}` : ''}"></label>
       <p class="adm-s">${pos ? 'Pin siap. Geser pin untuk menyesuaikan.' : 'Belum ada pin. Klik peta.'}</p>

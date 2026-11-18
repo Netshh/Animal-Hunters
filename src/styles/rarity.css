@@ -1,0 +1,79 @@
+/* Rarity look: grey < green < blue < purple (shimmer) < gold (shine + sparkle) < rainbow (animated). */
+[data-r=umum]      { --c1: #b4b9be; --c2: #80868c; --tint: #f5f6f7; }
+[data-r=jarang]    { --c1: #7be08a; --c2: #27ae4f; --tint: #f0fbf2; }
+[data-r=langka]    { --c1: #6cc0ff; --c2: #2a6bff; --tint: #eef6ff; }
+[data-r=epik]      { --c1: #c26bff; --c2: #7a3cff; --tint: #f8efff; }
+[data-r=legendaris]{ --c1: #ffe066; --c2: #ff9f1a; --tint: #fff8e1; }
+[data-r=mitos]     { --c1: #ff6ad5; --c2: #3dc8ff; --tint: #fdf7ff; }
+
+@keyframes flow { to { background-position: 200% 0; } }
+@keyframes flowb { to { background-position: 0 0, 200% 0; } }
+@keyframes shine { 0%, 60% { transform: translateX(-140%); } 100% { transform: translateX(140%); } }
+@keyframes twinkle { 0%, 100% { opacity: .15; } 50% { opacity: 1; } }
+@keyframes glowshift { 0% { filter: drop-shadow(0 0 9px #ff3d6e); } 33% { filter: drop-shadow(0 0 9px #ffd83d); }
+  66% { filter: drop-shadow(0 0 9px #3dc8ff); } 100% { filter: drop-shadow(0 0 9px #ff3d6e); } }
+
+/* Rarity pill */
+.rar.rar { display: inline-block; font-style: normal; font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+  padding: 2px 10px; border-radius: 999px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.25);
+  background: linear-gradient(135deg, var(--c1), var(--c2)); }
+.rar.rar[data-r=umum] { color: #fff; }
+.rar.rar[data-r=epik] { background: linear-gradient(120deg, #c26bff, #7a3cff, #ff5cd6, #c26bff); background-size: 200% 100%; animation: flow 3.5s linear infinite; }
+.rar.rar[data-r=legendaris] { color: #4a2f00; text-shadow: none;
+  background: linear-gradient(120deg, #ffe066, #ff9f1a, #fff3a8, #ffc42e, #ffe066); background-size: 200% 100%; animation: flow 2.6s linear infinite; }
+.rar.rar[data-r=mitos] { background: linear-gradient(120deg, #ff3d6e, #ff9a3d, #ffe43d, #3dff8a, #3dc8ff, #8a3dff, #ff3d6e); background-size: 200% 100%; animation: flow 3s linear infinite; }
+
+/* Cards: codex cards and the collection cards on player profiles */
+.cx, .pet[data-r] { position: relative; overflow: hidden; border: 2px solid transparent;
+  background: linear-gradient(var(--tint), var(--tint)) padding-box, linear-gradient(135deg, var(--c1), var(--c2)) border-box; }
+.cx[data-r=epik], .pet[data-r=epik] { background: linear-gradient(var(--tint), var(--tint)) padding-box, linear-gradient(120deg, #c26bff, #7a3cff, #ff5cd6, #c26bff) border-box;
+  background-size: 100% 100%, 200% 100%; animation: flowb 4s linear infinite; }
+.cx[data-r=legendaris], .pet[data-r=legendaris] { background: linear-gradient(var(--tint), var(--tint)) padding-box, linear-gradient(120deg, #ffe066, #ff9f1a, #fff3a8, #ffc42e, #ffe066) border-box;
+  background-size: 100% 100%, 200% 100%; animation: flowb 3s linear infinite; }
+.cx[data-r=mitos], .pet[data-r=mitos] { background: linear-gradient(var(--tint), var(--tint)) padding-box, linear-gradient(120deg, #ff3d6e, #ff9a3d, #ffe43d, #3dff8a, #3dc8ff, #8a3dff, #ff3d6e) border-box;
+  background-size: 100% 100%, 200% 100%; animation: flowb 3.5s linear infinite; }
+/* light sweep on the three top tiers */
+.cx[data-r=epik]::after, .cx[data-r=legendaris]::after, .cx[data-r=mitos]::after,
+.pet[data-r=epik]::after, .pet[data-r=legendaris]::after, .pet[data-r=mitos]::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.75) 50%, transparent 62%); animation: shine 3.4s ease-in-out infinite; }
+.cx[data-r=legendaris]::after, .pet[data-r=legendaris]::after { animation-duration: 2.8s; }
+.cx[data-r=mitos]::after, .pet[data-r=mitos]::after { animation-duration: 2.2s; }
+/* sparkles on gold + rainbow */
+.cx[data-r=legendaris]::before, .cx[data-r=mitos]::before, .pet[data-r=legendaris]::before, .pet[data-r=mitos]::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2; animation: twinkle 1.8s ease-in-out infinite;
+  background: radial-gradient(circle at 18% 22%, #fff 0 1.6px, transparent 3px), radial-gradient(circle at 82% 16%, #fff 0 1.3px, transparent 3px),
+    radial-gradient(circle at 72% 74%, #fff 0 1.6px, transparent 3px), radial-gradient(circle at 26% 80%, #fff 0 1.2px, transparent 3px); }
+.cx[data-r=mitos]::before, .pet[data-r=mitos]::before { animation-duration: 1.2s; }
+/* glow around the animal itself */
+.cx[data-r=epik] img, .pet[data-r=epik] img { filter: drop-shadow(0 0 7px rgba(194,107,255,.8)); }
+.cx[data-r=legendaris] img, .pet[data-r=legendaris] img { filter: drop-shadow(0 0 8px rgba(255,170,0,.9)); }
+.cx[data-r=mitos] img, .pet[data-r=mitos] img { animation: glowshift 4s linear infinite; }
+.cx[data-r=langka] img, .pet[data-r=langka] img { filter: drop-shadow(0 0 5px rgba(60,130,255,.55)); }
+
+/* Map markers glow by rarity (not once claimed) */
+.marker:not(.claimed)[data-r=langka] img { filter: drop-shadow(0 0 6px rgba(60,130,255,.8)); }
+.marker:not(.claimed)[data-r=epik] img { filter: drop-shadow(0 0 8px rgba(194,107,255,.95)); }
+.marker:not(.claimed)[data-r=legendaris] img { filter: drop-shadow(0 0 10px rgba(255,170,0,1)); }
+.marker:not(.claimed)[data-r=mitos] img { animation: glowshift 3s linear infinite; }
+
+/* Codex panel */
+#codex { left: 16px; top: 96px; width: 420px; max-height: calc(100vh - 112px); overflow-y: auto; padding: 18px; }
+.cx-prog { background: #f3f3f5; border-radius: 14px; padding: 12px; font-size: 14px; }
+.cx-prog .bar { height: 8px; background: #e2e2e7; border-radius: 6px; margin-top: 8px; overflow: hidden; }
+.cx-prog .bar i { display: block; height: 100%; background: linear-gradient(90deg, #7be08a, #3dc8ff, #c26bff); border-radius: 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 2px; }
+.chip { padding: 5px 11px; border-radius: 999px; background: #f0f0f3; font-weight: 600; font-size: 12px; }
+.chip.on { background: var(--ink); color: #fff; }
+.cx-h { display: flex; align-items: center; gap: 8px; margin: 18px 0 8px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.cx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cx { border-radius: 16px; padding: 10px 8px; text-align: center; }
+.cx img { width: 88px; height: 88px; display: block; margin: 0 auto; position: relative; z-index: 1; }
+.cx h4 { margin: 2px 0 6px; font-size: 15px; }
+.cx-pts { display: block; font-size: 19px; margin: 8px 0 4px; }
+.cx small { display: block; color: var(--muted); font-size: 11px; line-height: 1.35; }
+.cx-st { margin-top: 4px; font-weight: 600; }
+.cx-own { position: absolute; top: 6px; right: 6px; z-index: 3; background: var(--ink); color: #fff; border-radius: 9px; padding: 1px 7px; font-size: 11px; font-weight: 700; }
+.cx.nope img { opacity: .55; filter: grayscale(.6); animation: none; }
+#panel .ed .rar { margin: 0 4px; }
+@media (max-width: 760px) { #codex { left: 12px; right: 12px; width: auto; top: 84px; max-height: calc(100vh - 96px); } }
