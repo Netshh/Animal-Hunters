@@ -9,17 +9,16 @@ export function createMap(center) {
     center, zoom: 13, pitch: 55, bearing: -15,
     minZoom: 2, // about the whole world on a wide screen
     maxPitch: 75,
-    renderWorldCopies: false, // the world no longer repeats left/right
+    renderWorldCopies: true, // the world repeats left/right
     attributionControl: { compact: true },
   });
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right');
 
-  // Keep the camera inside the world. (maxBounds breaks the view when the map is tilted.)
+  // Allow endless left/right panning, but keep the camera from going past the poles.
   map.on('move', () => {
     const c = map.getCenter();
-    const lng = Math.max(-180, Math.min(180, c.lng));
     const lat = Math.max(-80, Math.min(80, c.lat));
-    if (lng !== c.lng || lat !== c.lat) map.setCenter([lng, lat]);
+    if (lat !== c.lat) map.setCenter([c.lng, lat]);
   });
 
   // Flatten the tilt when zoomed far out, where tilting makes no sense.
