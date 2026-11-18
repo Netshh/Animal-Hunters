@@ -41,3 +41,53 @@ button { font: inherit; cursor: pointer; border: 0; background: none; }
   #list { display: none; } #panel { left: 12px; right: 12px; width: auto; top: auto; bottom: 12px; }
   .nav nav a { padding: 8px 10px; } .nav { gap: 10px; }
 }
+
+/* ---- Leaderboard ---- */
+#board { left: 16px; top: 96px; width: 400px; max-height: calc(100vh - 112px); overflow-y: auto; padding: 18px; }
+.board-open #list, .board-open #panel { display: none; }
+.muted, .lb-sub, .lb-note { color: var(--muted); }
+.icon-btn { width: 36px; height: 36px; border-radius: 50%; background: #efeff2; font-size: 22px; }
+.lb-head { display: flex; justify-content: space-between; align-items: center; }
+.lb-head h2 { margin: 0; font-size: 24px; }
+.lb-sub { font-size: 14px; line-height: 1.4; margin: 6px 0 14px; }
+.tabs { display: flex; gap: 6px; background: #f0f0f3; padding: 4px; border-radius: 12px; margin-bottom: 10px; }
+.tabs button { flex: 1; padding: 8px; border-radius: 9px; font-weight: 600; color: var(--muted); }
+.tabs button.on { background: #fff; color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+.lb-list { list-style: none; margin: 0; padding: 0; }
+.lb-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px; border-radius: 14px; text-align: left; }
+.lb-row:hover, .lb-row:focus-visible, .back:focus-visible { background: #f3f3f5; outline: 2px solid var(--gold); }
+.lb-row.me { background: #fff7d6; }
+.rank { width: 30px; text-align: center; font-weight: 700; font-size: 18px; }
+.av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700; flex: none; }
+.av.big { width: 64px; height: 64px; font-size: 28px; }
+.who { flex: 1; min-width: 0; }
+.who strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.who small, .pts small { display: block; color: var(--muted); font-weight: 400; }
+.pts { text-align: right; font-weight: 700; }
+.chev { color: #b0b0b8; font-size: 20px; }
+.you { background: var(--ink); color: #fff; font-size: 11px; padding: 1px 7px; border-radius: 9px; margin-left: 6px; font-weight: 700; vertical-align: middle; }
+.lb-me { margin-top: 12px; padding: 12px; border-radius: 14px; background: #fff7d6; font-size: 14px; line-height: 1.4; }
+.lb-note { font-size: 12px; margin: 12px 0 0; }
+.empty { text-align: center; color: var(--muted); padding: 24px 0; }
+.back { font-weight: 600; padding: 6px 8px; margin: -4px 0 8px -8px; border-radius: 10px; }
+.pf { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
+.pf h3 { margin: 0 0 2px; font-size: 22px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+.stats div { background: #f3f3f5; border-radius: 14px; padding: 10px; text-align: center; }
+.stats b { display: block; font-size: 20px; }
+.stats span { font-size: 12px; color: var(--muted); }
+.lb-sec { font-size: 15px; margin: 16px 0 8px; }
+.pets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.pet { position: relative; text-align: center; border-radius: 14px; padding: 6px 2px 8px; background: #f7f7f9; border: 2px solid transparent; }
+.pet img { width: 100%; display: block; }
+.pet span { display: block; font-size: 11px; line-height: 1.2; }
+.pet i { display: block; font-style: normal; font-size: 10px; font-weight: 700; color: var(--muted); }
+.pet b { position: absolute; top: 2px; right: 4px; background: var(--ink); color: #fff; border-radius: 9px; padding: 0 6px; font-size: 12px; }
+.pet.langka { border-color: #7aa7ff; }
+.pet.legendaris { border-color: var(--gold); background: #fff9e0; }
+.pet.locked img { filter: brightness(0); opacity: .14; }
+.pet.locked span { color: #9a9aa3; }
+.recent { list-style: none; margin: 0; padding: 0; }
+.recent li { display: flex; justify-content: space-between; padding: 8px 2px; border-bottom: 1px solid #efeff2; font-size: 14px; }
+.recent small { color: var(--muted); }
+@media (max-width: 760px) { #board { left: 12px; right: 12px; width: auto; top: 84px; max-height: calc(100vh - 96px); } }

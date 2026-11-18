@@ -7,7 +7,7 @@ export function addMarkers(map, drops, onPick) {
     const el = document.createElement('button');
     el.className = 'marker';
     el.title = `${d.name} #${d.edition}`;
-    el.innerHTML = `<img src="/assets/animals/${d.series}.png" alt="" draggable="false">${i === 0 ? '<span class="badge">Last drop</span>' : ''}`;
+    el.innerHTML = `<img src="/assets/animals/${d.series}.png" alt="" draggable="false">${i === 0 ? '<span class="badge">Terbaru</span>' : ''}`;
     el.addEventListener('click', (e) => { e.stopPropagation(); onPick(d); });
     new maplibregl.Marker({ element: el, anchor: 'bottom', pitchAlignment: 'viewport', rotationAlignment: 'viewport' })
       .setLngLat([d.lng, d.lat]).addTo(map);

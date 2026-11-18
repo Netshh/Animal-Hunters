@@ -10,4 +10,4 @@ export function claim(id, by) {
   return c;
 }
 export const ago = (days) =>
-  days < 30 ? `${days} day${days > 1 ? 's' : ''} ago` : days < 365 ? `${Math.round(days / 30)} months ago` : 'over a year ago';
+  days < 1 ? 'hari ini' : days < 30 ? `${days} hari lalu` : days < 365 ? `${Math.round(days / 30)} bulan lalu` : 'lebih dari setahun lalu';

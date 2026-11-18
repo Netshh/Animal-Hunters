@@ -1,10 +1,11 @@
 // Mock data. Replace with an API call once the backend exists.
 export const CENTER = [106.8456, -6.2088]; // Jakarta [lng, lat]
+export const POINTS = { umum: 10, langka: 25, legendaris: 50 };
 export const SERIES = [
-  { key: 'fox', name: 'Foxy Throwie' }, { key: 'frog', name: 'Frog Ring' },
-  { key: 'owl', name: 'Night Owl' }, { key: 'penguin', name: 'Pocket Penguin' },
-  { key: 'panda', name: 'Panda Patch' }, { key: 'rabbit', name: 'Rabbit Toggle' },
-  { key: 'hedgehog', name: 'Spiky Pin' }, { key: 'turtle', name: 'Slow Turtle' },
+  { key: 'fox', name: 'Rubah Usil', rarity: 'umum' }, { key: 'frog', name: 'Katak Cincin', rarity: 'umum' },
+  { key: 'owl', name: 'Hantu Malam', rarity: 'langka' }, { key: 'penguin', name: 'Pinguin Saku', rarity: 'legendaris' },
+  { key: 'panda', name: 'Panda Mungil', rarity: 'legendaris' }, { key: 'rabbit', name: 'Kelinci Lincah', rarity: 'umum' },
+  { key: 'hedgehog', name: 'Landak Duri', rarity: 'langka' }, { key: 'turtle', name: 'Kura-kura Santai', rarity: 'umum' },
 ];
 
 // Seeded RNG so ids, tokens and positions are identical on every load.

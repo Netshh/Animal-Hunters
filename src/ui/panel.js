@@ -4,14 +4,14 @@ const el = document.getElementById('panel');
 export function showPanel(d, claimed, { canClaim = false, onClaim } = {}) {
   const c = claimed[d.id];
   const status = c
-    ? `Claimed by <b>${c.by}</b> on ${new Date(c.at).toLocaleDateString()}`
-    : canClaim ? 'You found it! It\'s yours if you claim it now.' : 'Still hidden. Scan its QR code to claim it.';
+    ? `Ditangkap oleh <b>${c.by}</b> pada ${new Date(c.at).toLocaleDateString('id-ID')}`
+    : canClaim ? 'Kamu menemukannya! Klaim sekarang sebelum orang lain.' : 'Masih tersembunyi. Pindai kode QR-nya untuk mengklaim.';
   el.innerHTML = `
-    <button class="x" aria-label="Close">×</button>
+    <button class="x" aria-label="Tutup">×</button>
     <img src="/assets/animals/${d.series}.png" alt="${d.name}">
     <div><h2>${d.name}</h2><p class="ed">#${d.edition}</p>
-    <p class="meta">Dropped ${ago(d.daysAgo)}</p><p class="meta">${status}</p>
-    ${canClaim && !c ? '<button class="btn claim">Claim it</button>' : ''}</div>`;
+    <p class="meta">Disebar ${ago(d.daysAgo)}</p><p class="meta">${status}</p>
+    ${canClaim && !c ? '<button class="btn claim">Klaim sekarang</button>' : ''}</div>`;
   el.classList.remove('hidden');
   el.querySelector('.x').onclick = hidePanel;
   el.querySelector('.claim')?.addEventListener('click', onClaim);
