@@ -1,6 +1,6 @@
 /* ---- Developer mode ---- */
-.nav .dev { background: #e53935; color: #fff; padding: 9px 16px; border-radius: 12px; font-weight: 700; }
-.nav .dev.on { outline: 2px solid #fff; }
+.nav .adm { background: #e53935; color: #fff; padding: 9px 16px; border-radius: 12px; font-weight: 700; }
+.nav .adm.on { outline: 2px solid #fff; }
 #admin { left: 16px; top: 96px; width: 400px; max-height: calc(100vh - 112px); overflow-y: auto; padding: 18px; }
 body.admin-open #list, body.admin-open #board { display: none !important; }
 .adm-l { display: block; margin: 12px 0 0; font-size: 13px; font-weight: 600; color: var(--muted); }
@@ -37,3 +37,8 @@ body.admin-open #list, body.admin-open #board { display: none !important; }
   #print-sheet b { display: block; font-size: 14pt; }
   #print-sheet small { color: #555; font-size: 9pt; }
 }
+
+.adm-copy { display: flex; gap: 6px; margin-top: 4px; }
+.adm-copy input { flex: 1; min-width: 0; font-size: 12px; }
+.adm-copy .sm { flex: none; }
+body.admin-open #codex { display: none !important; }

@@ -44,7 +44,9 @@ button { font: inherit; cursor: pointer; border: 0; background: none; }
 
 /* ---- Leaderboard ---- */
 #board { left: 16px; top: 96px; width: 400px; max-height: calc(100vh - 112px); overflow-y: auto; padding: 18px; }
-.board-open #list, .board-open #panel { display: none; }
+.board-open #list { display: none; }
+/* on narrow screens the two sides would overlap, so the animal details wait */
+@media (max-width: 900px) { .board-open #panel { display: none; } }
 .muted, .lb-sub, .lb-note { color: var(--muted); }
 .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: #efeff2; font-size: 22px; }
 .lb-head { display: flex; justify-content: space-between; align-items: center; }

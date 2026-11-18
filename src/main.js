@@ -54,6 +54,8 @@ async function start() {
   const admin = initAdmin({ map, getDrops: () => drops, getClaims: () => claims, onChange: () => refresh() });
 
   function open(d, fly = true) {
+    // narrow screens have no room for both: close the left panel so the animal details show
+    if (innerWidth <= 900) document.querySelector('.nav nav a[data-view="map"]')?.click();
     if (fly) map.flyTo({ center: [d.lng, d.lat], zoom: Math.max(map.getZoom(), 15.5), speed: 0.9 });
     showPanel(d, claims, { canClaim: !!token && scannedId === d.id, signedIn: !!user, onClaim: () => doClaim(d) });
   }

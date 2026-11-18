@@ -1,4 +1,4 @@
-// Developer-only mode: click the map to drop an animal, get a unique secret QR code to print.
+// Admin mode (for trusted people listed in the admins table): click the map to drop an animal, get a unique secret QR code to print.
 // The buttons are hidden for normal users, but the REAL protection is on the server:
 // create_drop / get_drop_token / delete_drop in Supabase all refuse anyone who is not in the admins table.
 import maplibregl from 'maplibre-gl';
@@ -30,7 +30,7 @@ async function makeQr(url) {
 
 export function initAdmin({ map, getDrops, getClaims, onChange }) {
   const btn = document.createElement('button');
-  btn.className = 'dev hidden'; btn.textContent = 'Dev';
+  btn.className = 'adm hidden'; btn.textContent = 'Admin';
   document.querySelector('.nav').insertBefore(btn, document.getElementById('login'));
   const panel = document.createElement('aside'); panel.id = 'admin'; panel.className = 'card hidden';
   const sheet = document.createElement('div'); sheet.id = 'print-sheet';
@@ -67,6 +67,12 @@ export function initAdmin({ map, getDrops, getClaims, onChange }) {
   const actions = {
     close: () => setOpen(false),
     toggleMock: () => { showMock = !showMock; render(); },
+    copy: async () => {
+      if (!result) return;
+      try { await navigator.clipboard.writeText(result.url); say('Tautan disalin.'); }
+      catch { panel.querySelector('[data-f=link]')?.select(); say('Tekan Ctrl+C untuk menyalin tautan yang terpilih.', true); }
+      render();
+    },
     create: () => pos && run(async () => {
       const r = await createDrop(series, pos.lng, pos.lat);
       clearPin();
@@ -111,6 +117,7 @@ export function initAdmin({ map, getDrops, getClaims, onChange }) {
     const t = e.target.closest('[data-act]');
     if (t && !t.disabled) actions[t.dataset.act]?.(t.dataset.id);
   });
+  panel.addEventListener('focusin', (e) => { if (e.target.dataset?.f === 'link') e.target.select(); });
   panel.addEventListener('change', async (e) => {
     const f = e.target.dataset.f;
     if (f === 'series') { series = e.target.value; }
@@ -137,7 +144,9 @@ export function initAdmin({ map, getDrops, getClaims, onChange }) {
     if (!open) clearPin();
     render();
   }
-  btn.onclick = () => setOpen(!open);
+  const navLinks = [...document.querySelectorAll('.nav nav a[data-view]')];
+  navLinks.forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  btn.onclick = () => { if (!open) navLinks.find((a) => a.dataset.view === 'map')?.click(); setOpen(!open); };
 
   function row(d, claims) {
     const c = claims[d.id];
@@ -154,7 +163,7 @@ export function initAdmin({ map, getDrops, getClaims, onChange }) {
     const drops = getDrops(), claims = getClaims();
     const real = drops.filter((d) => !d.mock), mock = drops.filter((d) => d.mock);
     panel.innerHTML = `
-      <div class="lb-head"><h2>Mode Developer</h2><button class="icon-btn" data-act="close" aria-label="Tutup">×</button></div>
+      <div class="lb-head"><h2>Panel Admin</h2><button class="icon-btn" data-act="close" aria-label="Tutup">×</button></div>
       <p class="lb-sub">Klik peta untuk menaruh pin (pin bisa digeser). Pilih hewan, lalu buat QR unik untuk mainan itu.</p>
       <label class="adm-l">Hewan
         <select data-f="series">${SERIES.map((s) => `<option value="${s.key}" ${s.key === series ? 'selected' : ''}>${esc(s.name)} (${RARITIES[s.rarity].label})</option>`).join('')}</select></label>
@@ -167,7 +176,9 @@ export function initAdmin({ map, getDrops, getClaims, onChange }) {
         <div class="adm-qr"><img src="${result.dataUrl}" alt="Kode QR ${esc(result.label)}">
           <div><strong>${esc(result.label)}</strong><small>${esc(result.id)}</small>
             <a class="btn" href="${result.dataUrl}" download="${esc(result.id)}.png">Unduh PNG</a><button class="btn" data-act="print">Cetak</button></div></div>
-        <label class="adm-l">Alamat situs di dalam QR<input data-f="site" value="${esc(site)}"></label>
+        <label class="adm-l">Tautan unik di dalam QR (rahasia)
+          <span class="adm-copy"><input data-f="link" readonly value="${esc(result.url)}"><button class="sm" data-act="copy">Salin</button></span></label>
+        <label class="adm-l">Alamat situs (bagian depan tautan, ubah hanya jika domain berganti)<input data-f="site" value="${esc(site)}"></label>
         <p class="adm-s">Siapa pun yang memegang kode ini bisa mengklaim hewannya. Simpan rahasia sampai ditempel di mainan.</p>` : ''}
       <h4 class="lb-sec">Drop buatanmu (${real.length})</h4>
       ${real.length ? `<ul class="adm-list">${real.map((d) => row(d, claims)).join('')}</ul>` : '<p class="adm-s">Belum ada. Drop pertamamu akan muncul di sini.</p>'}
